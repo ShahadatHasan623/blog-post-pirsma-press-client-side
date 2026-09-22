@@ -1,9 +1,11 @@
-import React from 'react'
+import HomeContent from "@/components/HomeContent";
+import { Suspense } from "react";
 
-const PublicNewsPage = () => {
-   return (
-      <div>PublicNewsPage</div>
-   )
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
+  );
 }
-
-export default PublicNewsPage

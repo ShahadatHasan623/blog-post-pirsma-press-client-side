@@ -7,13 +7,16 @@ import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 
+
 const LoginFrom = () => {
    const [state,action,pending]=useActionState(loginAction,false)
+   // const router =useRouter()
 
    useEffect(()=>{
       if(!state)return;
       if(state.success){
          toast.success(state.message || "Login Successful")
+         // router.push("/dashboard")
       }
       if(!state.success){
          toast.warning(state.message || "Login Faild")
