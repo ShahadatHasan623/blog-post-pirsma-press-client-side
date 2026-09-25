@@ -89,20 +89,15 @@ type NavbarProps = {
 
 export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
-  const [isLogouting, setIsLoggingOut] = useState(false); 
-  const router =useRouter()
+  const router = useRouter()
   const handleUserMenuAction = async (action: string) => {
     if (action === "logout") {
       await logout();
-      setIsLoggingOut(true)
+      toast.success("User Logged out successfully")
+      router.push("/login");
     }
   };
-  useEffect(()=>{
-    if(isLogouting){
-      toast.success("User Logged Out Successfully")
-      router.push("/login")
-    }
-  },[isLogouting,router])
+
   return (
     <nav className="border-b bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
@@ -136,92 +131,101 @@ export default function Navbar({ user }: NavbarProps) {
         </div>
 
         {/* User Dropdown */}
-        <div className="hidden md:block">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <User className="h-4 w-4" />
-                {user.data?.profile?.name || "User"}
-              </Button>
-            </DropdownMenuTrigger>
+        {
+          user.success ? (
+            <>
+              {/* Desktop User Menu */}
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      <User className="h-4 w-4" />
+                      {user.data?.profile?.name || "User"}
+                    </Button>
+                  </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-48">
-              {userMenuItems.map((item) => {
-                const Icon = item.icon;
+                  <DropdownMenuContent align="end" className="w-48">
+                    {userMenuItems.map((item) => {
+                      const Icon = item.icon;
 
-                return (
-                  <DropdownMenuItem key={item.href} asChild>
-                    <Link
-                      href={item.href}
-                      className="flex cursor-pointer items-center gap-2"
+                      return (
+                        <DropdownMenuItem key={item.href} asChild>
+                          <Link
+                            href={item.href}
+                            className="flex cursor-pointer items-center gap-2"
+                          >
+                            <Icon className="h-4 w-4" />
+                            {item.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      );
+                    })}
+
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-500"
+                      onClick={() => handleUserMenuAction("logout")}
                     >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  </DropdownMenuItem>
-                );
-              })}
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
 
-              <DropdownMenuSeparator />
+              {/* Mobile Menu */}
+              <div className="md:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
 
-              <DropdownMenuItem
-                className="cursor-pointer text-red-500"
-                onClick={() => handleUserMenuAction("logout")}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                  <DropdownMenuContent align="end" className="w-56">
+                    {navItems.map((item) => (
+                      <DropdownMenuItem key={item.href} asChild>
+                        <Link href={item.href}>
+                          {item.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
 
-        {/* Mobile Menu */}
-        <div className="md:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
+                    <DropdownMenuSeparator />
+
+                    {userMenuItems.map((item) => {
+                      const Icon = item.icon;
+
+                      return (
+                        <DropdownMenuItem key={item.href} asChild>
+                          <Link href={item.href}>
+                            <Icon className="mr-2 h-4 w-4" />
+                            {item.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      );
+                    })}
+
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-500"
+                      onClick={() => handleUserMenuAction("logout")}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </>
+          ) : (
+            <Link href="/login">
+              <Button variant="secondary">
+                Login
               </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end" className="w-56">
-
-              {/* Navigation Items */}
-              {navItems.map((item) => (
-                <DropdownMenuItem key={item.href} asChild>
-                  <Link href={item.href}>
-                    {item.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-
-              <DropdownMenuSeparator />
-
-              {/* User Items */}
-              {userMenuItems.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <DropdownMenuItem key={item.href} asChild>
-                    <Link href={item.href}>
-                      <Icon className="mr-2 h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  </DropdownMenuItem>
-                );
-              })}
-
-              <DropdownMenuItem
-                className="cursor-pointer text-red-500"
-                onClick={() => handleUserMenuAction("logout")}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
+            </Link>
+          )
+        }
       </div>
     </nav>
   );
