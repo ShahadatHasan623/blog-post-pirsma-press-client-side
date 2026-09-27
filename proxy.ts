@@ -26,7 +26,7 @@ export async function proxy(request: NextRequest) {
       )
     : null;
 
-  if (decodedAccessToken?.success && decodedRefreshToken?.success) {
+  if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
     // If the access token is invalid but the refresh token is valid, you can generate a new access token here.
 
     const result = await getNewAccessToken();
@@ -67,6 +67,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // Check if the route is public or requires authentication
   const isPublicRoute = PUBLIC_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(route + "/")
   );
@@ -79,6 +80,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  // If the user is authenticated, check their role and redirect accordingly
   if (pathname.startsWith("/dashboard") && userRole !== "USER") {
     return NextResponse.redirect(new URL("/not-found", request.url));
   } else if (pathname.startsWith("/admin-dashboard") && userRole !== "ADMIN") {

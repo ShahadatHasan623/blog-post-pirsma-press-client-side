@@ -25,6 +25,7 @@ export const loginAction = async (
     password,
   };
 
+  // Send a POST request to the backend API for login
   const res = await fetch(`${process.env.BACKEND_API_URL}/api/auth/login`, {
     method: "POST",
     headers: {
@@ -48,6 +49,7 @@ export const loginAction = async (
       sameSite: "lax",
     });
     
+    // Decode the access token to get the user role
     const decodedToken =jwt.decode(result.data.accessToken) as JwtPayload;
     if(decodedToken.role === "USER"){
       redirect("/dashboard")
