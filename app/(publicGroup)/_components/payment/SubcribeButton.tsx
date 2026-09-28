@@ -1,33 +1,33 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
+import { subscribePremium } from "../../_actions/subscribePremium";
 
 export function SubscribeButton() {
-  const [pending, setPending] = useState(false);
+  const [state, action, pending] = useActionState(
+    subscribePremium,
+    null
+  );
 
-  const handleSubscribe = async () => {
-    setPending(true);
+  useEffect(() => {
+    if (!state) return;
 
-    // Demo API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setPending(false);
-
-    toast.success("Checkout started successfully!", {
-      description: "Demo payment checkout is ready.",
-    });
-  };
+    if (!state.success) {
+      toast.error(state.message || "Failed to start checkout");
+    }
+  }, [state]);
 
   return (
-    <Button
-      type="button"
-      onClick={handleSubscribe}
-      disabled={pending}
-      className="w-full"
-    >
-      {pending ? "Redirecting..." : "Subscribe Now"}
-    </Button>
+    <form action={action}>
+      <Button
+        type="submit"
+        disabled={pending}
+        className="w-full"
+      >
+        {pending ? "Redirecting..." : "Subscribe Now"}
+      </Button>
+    </form>
   );
 }

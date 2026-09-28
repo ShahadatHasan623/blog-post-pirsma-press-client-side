@@ -1,7 +1,8 @@
-"use server"
+"use server";
+
 import { cookies } from "next/headers";
 
-export const getPremiumNews = async () => {
+export const getSubscriptionStatus= async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
@@ -12,17 +13,15 @@ export const getPremiumNews = async () => {
     };
   }
 
-  const res = await fetch(
-    `${process.env.BACKEND_API_URL}/api/premium`,
-    {
-      headers: {
-        Cookie: `accessToken=${accessToken}`,
-      },
-      cache: "no-store",
-    }
-  );
+  const res = await fetch(`${process.env.BACKEND_API_URL}/api/subscription/status`, {
+    headers: {
+      Cookie: `accessToken=${accessToken}`,
+    },
+    
+  });
 
   const result = await res.json();
 
+   
   return result;
 };
