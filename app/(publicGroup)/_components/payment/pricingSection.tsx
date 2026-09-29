@@ -6,9 +6,9 @@ import { SubscribeButton } from "./SubcribeButton";
 
 
 export async function PricingSection() {
-  const statusResult = await getSubscriptionStatus()
+  const subscriptionStatus = await getSubscriptionStatus()
  const isActive = Boolean(
-    statusResult?.success && statusResult.data?.isSubscribed
+    subscriptionStatus?.success && subscriptionStatus.data?.isSubscribed
   );
 
 
@@ -20,8 +20,8 @@ export async function PricingSection() {
           {isActive && <Badge>Active</Badge>}
         </CardTitle>
         <CardDescription>
-          {isActive && statusResult.data?.currentPeriodEnd
-            ? `Renews on ${new Date(statusResult.data.currentPeriodEnd).toLocaleDateString()}`
+          {isActive && subscriptionStatus.data?.currentPeriodEnd
+            ? `Renews on ${new Date(subscriptionStatus.data.currentPeriodEnd).toLocaleDateString()}`
             : "Unlock every premium story, cancel anytime."}
         </CardDescription>
       </CardHeader>

@@ -39,3 +39,29 @@ export type IPost = {
     createdAt: string;
     updatedAt: string;
 };
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  activeStatus: "ACTIVE" | "INACTIVE";
+  role: "ADMIN" | "USER";
+  createdAt: string;
+  updatedAt: string;
+};
+export type Post = {
+  id: string;
+  title: string;
+  content: string;
+  thumbnail: string;
+  isFeatured: boolean;
+  isPremium: boolean;
+  status: IPostStatus;
+  tags: string[];
+  views: number;
+  authorId: string;
+  createdAt: string;
+  updateAt: string;
+  author: User;
+  comments: Comment[];
+};

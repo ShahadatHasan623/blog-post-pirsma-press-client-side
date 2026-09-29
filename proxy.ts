@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 import { jwtUtils } from "./utils/jwt";
 import { cookies } from "next/headers";
 import { getNewAccessToken } from "./service/refreshToken";
+import { getSubscriptionStatus } from "./app/(publicGroup)/_actions/getSubscriptionStatus";
 const AUTH_ROUTES = ["/login", "/register"];
 const PUBLIC_ROUTES = ["/", "/news"];
 // This function can be marked `async` if using `await` inside
@@ -92,6 +93,16 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/not-found", request.url));
   } else if (pathname.startsWith("/login") && accessToken) {
     return NextResponse.redirect(new URL("/not-found", request.url));
+  }
+
+  if (pathname === "/premium") {
+    const subscriptionStatus = await getSubscriptionStatus();
+    const isActive = Boolean(
+      subscriptionStatus?.success && subscriptionStatus.data?.isSubscribed
+    );
+    if (!isActive) {
+      return NextResponse.redirect(new URL("/payment", request.url));
+    }
   }
 
   //   return NextResponse.redirect(new URL("/", request.url));

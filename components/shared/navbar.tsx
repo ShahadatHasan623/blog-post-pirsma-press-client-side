@@ -43,6 +43,14 @@ const navItems = [
     label: "Contact",
     href: "/contact",
   },
+  {
+    label: "News",
+    href: "/news",
+  },
+  {
+    label: "Premium",
+    href: "/premium",
+  },
 ];
 
 const userMenuItems = [
@@ -100,7 +108,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <nav className="border-b bg-background">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
 
         {/* Logo */}
         <Link
