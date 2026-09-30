@@ -26,7 +26,12 @@ export const getPremiumNews = async ({
       headers: {
         Cookie: `accessToken=${accessToken}`,
       },
-      cache: "no-store",
+      cache: "no-cache",
+      next:{
+        revalidate:60*60*6,
+        tags:["premium-posts"]
+
+      }
     }
   );
 
