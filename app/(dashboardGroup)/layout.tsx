@@ -1,17 +1,24 @@
-import PublicLayoutContent from "@/components/shared/PublicLayoutContent";
-import React, { Suspense } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Suspense } from "react";
+import DashboardLayoutContent from "./DashboardLayoutContent";
 
-
-const PublicLayout = ({
+const DashboardLayout = async ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PublicLayoutContent>{children}</PublicLayoutContent>
-    </Suspense>
+    <TooltipProvider>
+      <SidebarProvider>
+        <Suspense fallback={<p>Loading...</p>}>
+          <DashboardLayoutContent>
+            {children}
+          </DashboardLayoutContent>
+        </Suspense>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 };
 
-export default PublicLayout;
+export default DashboardLayout;
