@@ -9,7 +9,7 @@ export const ADMIN_SIDEBAR_ITEMS: ISidebarItem[] = [
     },
     {
         label : "My Posts",
-        href : "/admin-dashboard/my-post",
+        href : "/admin-dashboard/my-posts",
         icon : FileText
     },
 ]

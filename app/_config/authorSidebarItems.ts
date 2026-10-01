@@ -9,7 +9,7 @@ export const AUTHOR_SIDEBAR_ITEMS: ISidebarItem[] = [
     },
     {
         label: "My Posts",
-        href: "/author-dashboard/my-post",
+        href: "/author-dashboard/my-posts",
         icon: FileText
     },
 ]

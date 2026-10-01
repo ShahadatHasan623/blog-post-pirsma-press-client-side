@@ -50,7 +50,7 @@ export async function proxy(request: NextRequest) {
   let userRole = null;
   if (!decodedAccessToken?.success) {
     cookieStroe.delete("accessToken");
-    //  return NextResponse.redirect(new URL("/login", request.url));
+    // return NextResponse.redirect(new URL("/login", request.url));
   }
   if (decodedAccessToken?.success && decodedAccessToken.data) {
     userRole = (decodedAccessToken.data as JwtPayload).role;
@@ -78,7 +78,9 @@ export async function proxy(request: NextRequest) {
   );
 
   if (!accessToken && !isPublicRoute && !isAuthRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const redirectUrl = new URL("/login", request.url);
+    redirectUrl.searchParams.set("redirectTo", pathname + request.nextUrl.search);
+    return NextResponse.redirect(redirectUrl);
   }
 
   // If the user is authenticated, check their role and redirect accordingly

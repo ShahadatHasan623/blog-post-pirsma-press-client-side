@@ -4,14 +4,15 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { loginAction } from '../_actions/actionsLogin'
 import { useActionState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 
 
 
 const LoginFrom = () => {
-   const [state,action,pending]=useActionState(loginAction,false)
-   // const router =useRouter()
-
+   const searchParams = useSearchParams()
+   const redirectTo = searchParams.get("redirectTo") ?? ""
+   const [state,action,pending]=useActionState(loginAction.bind(null, redirectTo),false)
    useEffect(()=>{
       if(!state)return;
       if(state.success){

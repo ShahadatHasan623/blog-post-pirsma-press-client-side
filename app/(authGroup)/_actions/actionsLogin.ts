@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import jwt, { JwtPayload } from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 type LoginState = {
   success: true;
@@ -14,6 +14,7 @@ type LoginState = {
   };
 };
 export const loginAction = async (
+  redirectTo: string,
   prevState: LoginState,
   formData: FormData
 ) => {
@@ -48,15 +49,24 @@ export const loginAction = async (
       maxAge: 60 * 60 * 7,
       sameSite: "lax",
     });
-    
+
+    if (
+      redirectTo &&
+      typeof redirectTo === "string" &&
+      redirectTo.startsWith("/") &&
+      !redirectTo.startsWith("//")
+    ) {
+      redirect(redirectTo);
+    }
+
     // Decode the access token to get the user role
-    const decodedToken =jwt.decode(result.data.accessToken) as JwtPayload;
-    if(decodedToken.role === "USER"){
-      redirect("/dashboard")
-    }else if(decodedToken.role === "ADMIN"){
-      redirect("/admin-dashboard")
-    }else if(decodedToken.role === "AUTHOR"){
-      redirect("/author-dashboard")
+    const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+    if (decodedToken.role === "USER") {
+      redirect("/dashboard");
+    } else if (decodedToken.role === "ADMIN") {
+      redirect("/admin-dashboard");
+    } else if (decodedToken.role === "AUTHOR") {
+      redirect("/author-dashboard");
     }
   }
   return result;

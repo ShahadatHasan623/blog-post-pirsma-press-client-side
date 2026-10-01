@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  LayoutDashboard,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/service/logout";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 
@@ -54,6 +54,11 @@ const navItems = [
 ];
 
 const userMenuItems = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
   {
     label: "Profile",
     href: "/profile",
@@ -99,6 +104,18 @@ export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter()
   const handleUserMenuAction = async (action: string) => {
+    if(action === "dashboard"){
+      if(user.data.profile.role === "USER"){
+        router.push("/dashboard");
+      }else if(user.data.profile.role === "AUTHOR"){
+        router.push("/author-dashboard");
+      }else if(user.data.profile.role === "ADMIN"){
+        router.push("/admin-dashboard");
+      }else{
+        toast.error("User role not recognized");
+      }
+      return;
+    }
     if (action === "logout") {
       await logout();
       toast.success("User Logged out successfully")

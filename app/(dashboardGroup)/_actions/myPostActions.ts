@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
+import { getNewAccessToken } from "@/service/refreshToken";
+import { jwtUtils } from "@/utils/jwt";
 import { revalidateTag } from "next/cache";
 
 import { cookies } from "next/headers";
@@ -20,13 +22,43 @@ export const createPost =async(PreVState:PostState,formData:FormData)=>{
       isPremium:formData.get("isPremium") === "on"
    }
    const cookieStore = await cookies();
-   const accessToken = cookieStore.get("accessToken")?.value;
-   if (!accessToken) {
+   let accessToken = cookieStore.get("accessToken")?.value;
+   const refreshToken = cookieStore.get("refreshToken")?.value;
+   if (!accessToken && !refreshToken) {
     return {
       success: false,
       message: "User not logged in!",
     };
   }
+
+    const decodedAccessToken = accessToken
+      ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
+      : null;
+  
+    const decodedRefreshToken = refreshToken
+      ? jwtUtils.verifyToken(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET as string
+        )
+      : null;
+  
+    if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
+      // If the access token is invalid but the refresh token is valid, you can generate a new access token here.
+  
+      const result = await getNewAccessToken();
+  
+      if (result.success) {
+        const newAccessToken = result.data.accessToken;
+        cookieStore.set("accessToken", newAccessToken, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 24, // 1 day
+          sameSite: "lax",
+        });
+        accessToken = newAccessToken;
+       
+      }
+    }
+
 
   const res = await fetch(`${process.env.BACKEND_API_URL}/api/posts`, {
    method:"POST",
@@ -61,13 +93,42 @@ export const updatePost =async(postId:string,PreVState:PostState,formData:FormDa
       isPremium:formData.get("isPremium") === "on"
    }
    const cookieStore = await cookies();
-   const accessToken = cookieStore.get("accessToken")?.value;
-   if (!accessToken) {
+   let accessToken = cookieStore.get("accessToken")?.value;
+    const refreshToken = cookieStore.get("refreshToken")?.value;
+   if (!accessToken && !refreshToken) {
     return {
       success: false,
       message: "User not logged in!",
     };
   }
+
+    const decodedAccessToken = accessToken
+      ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
+      : null;
+  
+    const decodedRefreshToken = refreshToken
+      ? jwtUtils.verifyToken(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET as string
+        )
+      : null;
+  
+    if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
+      // If the access token is invalid but the refresh token is valid, you can generate a new access token here.
+  
+      const result = await getNewAccessToken();
+  
+      if (result.success) {
+        const newAccessToken = result.data.accessToken;
+        cookieStore.set("accessToken", newAccessToken, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 24, // 1 day
+          sameSite: "lax",
+        });
+        accessToken = newAccessToken;
+       
+      }
+    }
 
   const res = await fetch(`${process.env.BACKEND_API_URL}/api/posts/${postId}`, {
    method:"PATCH",
